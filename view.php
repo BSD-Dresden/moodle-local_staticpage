@@ -23,14 +23,13 @@
  */
 
 // Include config.php.
-// @codingStandardsIgnoreStart
+// phpcs:disable moodle.Files.RequireLogin.Missing
 // Let codechecker ignore the next line because otherwise it would complain about a missing login check
 // after requiring config.php which is really not needed.
 require(__DIR__ . '/../../config.php');
-// @codingStandardsIgnoreEnd
 
 // Globals.
-global $CFG, $PAGE;
+global $CFG, $PAGE, $USER;
 
 // Include lib.php.
 require_once($CFG->dirroot.'/local/staticpage/lib.php');
@@ -119,6 +118,13 @@ if (!empty($staticdoc->getElementsByTagName('style')->item(0)->nodeValue)) {
     $CFG->additionalhtmlhead = $CFG->additionalhtmlhead.'<style>'.$style.'</style>';
 }
 
+// Extract link tags in head (if present) and insert into HTML head.
+if (!empty($staticdoc->getElementsByTagName('link'))) {
+    $linknodes = $staticdoc->getElementsByTagName('link');
+    foreach ($linknodes as $linknode) {
+        $CFG->additionalhtmlhead .= $staticdoc->saveHTML($linknode);
+    }
+}
 
 // Set page title.
 if ($localstaticpageconfig->documenttitlesource == STATICPAGE_TITLE_H1) {
@@ -162,5 +168,16 @@ if ($localstaticpageconfig->processfilters == STATICPAGE_PROCESSFILTERS_YES &&
 } else { // This should not happen.
     echo $pagecontent;
 }
+
+// Log this view.
+$logevent = \local_staticpage\event\staticpage_viewed::create([
+    'userid' => $USER->id,
+    'context' => $context,
+    'other' => [
+        'title' => $title,
+        'page' => $page,
+    ],
+]);
+$logevent->trigger();
 
 echo $OUTPUT->footer();

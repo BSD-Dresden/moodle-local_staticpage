@@ -4,6 +4,14 @@ moodle-local_staticpage
 Changes
 -------
 
+### v4.2-r2
+
+* 2024-08-11 - Add section for scheduled tasks to README
+* 2024-08-11 - Updated Moodle Plugin CI to latest upstream recommendations
+* 2024-08-11 - Preserve <link> tags in head of static page document by moving it to the Moodle <head> element, credits to Peter Keijsers.
+* 2024-08-11 - Added static page view even, credits to Jeroen de Bruijn.
+* 2024-01-08 - Improve the installation and usage of language packs in Behat tests.
+
 ### v4.2-r1
 
 * 2023-10-19 - Fix Behat tests which broke on Moodle 4.2.
